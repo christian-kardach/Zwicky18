@@ -37,7 +37,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->saturationSlider, SIGNAL(valueChanged(int)), usbCameras, SLOT(onSaturationSlider(int)));
 
     connect(usbCameras, SIGNAL(addCamera(QString, QVariant)), this, SLOT(addCamera(QString, QVariant)));
-    connect(usbCameras, SIGNAL(hasBrightness(bool, int, int)), this, SLOT(hasBrightness(bool, int, int)));
+
+    connect(usbCameras, SIGNAL(hasBrightness(const bool, const int, const int)), this, SLOT(hasBrightness(const bool, const int, const int)));
     connect(usbCameras, SIGNAL(hasExposure(bool, int, int)), this, SLOT(hasExposure(bool, int, int)));
     connect(usbCameras, SIGNAL(hasGamma(bool, int, int)), this, SLOT(hasGamma(bool, int, int)));
     connect(usbCameras, SIGNAL(hasWhiteBalance(bool, int, int)), this, SLOT(hasWhiteBalance(bool, int, int)));
@@ -49,6 +50,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(usbCameras, SIGNAL(hasHue(bool, int, int)), this, SLOT(hasHue(bool, int, int)));
     connect(usbCameras, SIGNAL(hasSharpness(bool, int, int)), this, SLOT(hasSharpness(bool, int, int)));
     connect(usbCameras, SIGNAL(hasBacklightcomp(bool, int, int)), this, SLOT(hasBacklightcomp(bool, int, int)));
+    connect(usbCameras, SIGNAL(hasPowerlineFreq(bool, int, int)), this, SLOT(hasPowerlineFreq(bool, int, int)));
 
     connect(usbCameras, SIGNAL(setBrightness(int)), ui->brightnessSlider, SLOT(setValue(int)));
     connect(usbCameras, SIGNAL(setExposure(int)), ui->exposureSlider, SLOT(setValue(int)));
@@ -62,6 +64,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(usbCameras, SIGNAL(setHue(int)), ui->hueSlider, SLOT(setValue(int)));
     connect(usbCameras, SIGNAL(setSharpness(int)), ui->sharpnessSlider, SLOT(setValue(int)));
     connect(usbCameras, SIGNAL(setBacklightcomp(int)), ui->backlightSlider, SLOT(setValue(int)));
+    connect(usbCameras, SIGNAL(setPowerlineFreq(int)), ui->powerlineFreqSlider, SLOT(setValue(int)));
 
     usbCameras->listCameras();
 
@@ -200,6 +203,13 @@ void MainWindow::hasBacklightcomp(bool enabled, int emin, int emax)
     ui->backlightSlider->setRange(emin, emax);
     ui->backlightSpinBox->setRange(emin, emax);
     ui->backlightSpinBox->setEnabled(enabled);
+}
+void MainWindow::hasPowerlineFreq(bool enabled, int emin, int emax)
+{
+    ui->powerlineFreqSlider->setEnabled(enabled);
+    ui->powerlineFreqSlider->setRange(emin, emax);
+    ui->powerlineFreqSpinBox->setRange(emin, emax);
+    ui->powerlineFreqSpinBox->setEnabled(enabled);
 }
 
 

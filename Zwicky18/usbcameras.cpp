@@ -325,7 +325,7 @@ void USBCameras::readCameraSettings()
     {
         qDebug() << "Exposure: " << exposure;
         //ui->exposureSlider->setValue(exposure);
-        emit setExposure(exposure);
+        emit setExposure((int)exposure);
 
     }
     else
@@ -346,7 +346,7 @@ void USBCameras::readCameraSettings()
         qDebug() << "White balance max: " << emax;
         qDebug() << "White balance default: " << edefault;
 
-        emit hasExposure(true, emin, emax);
+        emit hasWhiteBalance(true, emin, emax);
         m_hasWhiteBalance = true;
         /*
         ui->whitebalanceSlider->setRange(emin, emax);
@@ -438,12 +438,15 @@ void USBCameras::readCameraSettings()
         qDebug() << "Contrast min: " << emin;
         qDebug() << "Contrast max: " << emax;
         qDebug() << "Contrast default: " << edefault;
+
+        emit hasContrast(true, emin, emax);
         //ui->contrastSlider->setEnabled(true);
         //ui->contrastSlider->setRange(emin, emax);
         m_hasContrast = true;
     }
     else
     {
+        emit hasContrast(false, 0, 0);
         //ui->contrastSlider->setRange(0, 0);
         //ui->contrastSlider->setEnabled(false);
     }
@@ -453,10 +456,12 @@ void USBCameras::readCameraSettings()
     {
         qDebug() << "Contrast: " << contrast;
         //ui->contrastSlider->setValue(contrast);
+        emit setContrast(contrast);
     }
     else
     {
         qDebug() << "Failed to get contrast value";
+        emit hasContrast(false, 0, 0);
         //ui->contrastSlider->setEnabled(false);
     }
 
@@ -473,10 +478,12 @@ void USBCameras::readCameraSettings()
         //ui->brightnessSlider->setRange(emin, emax);
         //ui->brightnessSpinBox->setRange(emin, emax);
         //ui->brightnessSpinBox->setEnabled(true);
+        emit hasBrightness(true, emin, emax);
         m_hasBrightness = true;
     }
     else
     {
+        emit hasGain(false, 0, 0);
         //ui->brightnessSlider->setRange(0, 0);
         //ui->brightnessSlider->setEnabled(false);
         //ui->brightnessSpinBox->setRange(0, 0);
@@ -490,12 +497,14 @@ void USBCameras::readCameraSettings()
         //ui->brightnessSlider->setEnabled(true);
         //ui->brightnessSlider->setValue(brightness);
         //ui->brightnessSpinBox->setEnabled(true);
+        emit setBrightness(brightness);
     }
     else
     {
         qDebug() << "Failed to get brightness value";
         //ui->brightnessSlider->setEnabled(false);
         //ui->brightnessSpinBox->setEnabled(false);
+        emit hasBrightness(false, 0, 0);
     }
 
     // ********************************************************************************
@@ -511,10 +520,12 @@ void USBCameras::readCameraSettings()
         //ui->gammaSlider->setRange(emin, emax);
         //ui->gammaSpinBox->setEnabled(true);
         //ui->gammaSpinBox->setRange(emin, emax);
+        emit hasGamma(true, emin, emax);
         m_hasGamma = true;
     }
     else
     {
+        emit hasGamma(false, 0, 0);
         //ui->gammaSlider->setRange(0, 0);
         //ui->gammaSlider->setEnabled(false);
         //ui->gammaSpinBox->setRange(0, 0);
@@ -527,14 +538,15 @@ void USBCameras::readCameraSettings()
         qDebug() << "Gamma: " << gamma;
         //ui->gammaSlider->setEnabled(true);
         //ui->gammaSpinBox->setEnabled(true);
-
         //ui->gammaSlider->setValue(gamma);
+        emit setGamma(gamma);
     }
     else
     {
         qDebug() << "Failed to get gamma value";
         //ui->gammaSlider->setEnabled(false);
         //ui->gammaSpinBox->setEnabled(false);
+        emit hasGamma(false, 0, 0);
     }
 
     // ********************************************************************************
@@ -550,10 +562,12 @@ void USBCameras::readCameraSettings()
         //ui->saturationSlider->setRange(emin, emax);
         //ui->saturationSpinBox->setEnabled(true);
         //ui->saturationSpinBox->setRange(emin, emax);
+        emit hasSaturation(true, emin, emax);
         m_hasSaturation = true;
     }
     else
     {
+        emit hasSaturation(false, 0, 0);
         //ui->saturationSlider->setRange(0, 0);
         //ui->saturationSlider->setEnabled(false);
         //ui->saturationSpinBox->setRange(0, 0);
@@ -567,12 +581,14 @@ void USBCameras::readCameraSettings()
         //ui->saturationSlider->setEnabled(true);
         //ui->saturationSpinBox->setEnabled(true);
         //ui->saturationSlider->setValue(saturation);
+        emit setSaturation(saturation);
     }
     else
     {
         qDebug() << "Failed to get saturation value";
         //ui->saturationSlider->setEnabled(false);
         //ui->saturationSpinBox->setEnabled(false);
+        emit hasSaturation(false, 0, 0);
     }
 
     // ********************************************************************************
@@ -588,6 +604,7 @@ void USBCameras::readCameraSettings()
         //ui->zoomSlider->setRange(emin, emax);
         //ui->zoomSpinBox->setEnabled(true);
         //ui->zoomSpinBox->setRange(emin, emax);
+        emit hasZoom(true, emin, emax);
         m_hasZoom = true;
     }
     else
@@ -596,6 +613,7 @@ void USBCameras::readCameraSettings()
         //ui->zoomSlider->setEnabled(false);
         //ui->zoomSpinBox->setRange(0, 0);
         //ui->zoomSpinBox->setEnabled(false);
+        emit hasZoom(false, 0, 0);
     }
 
     int32_t zoom;
@@ -605,12 +623,14 @@ void USBCameras::readCameraSettings()
         //ui->zoomSlider->setEnabled(true);
         //ui->zoomSpinBox->setEnabled(true);
         //ui->zoomSlider->setValue(zoom);
+        emit setZoom(zoom);
     }
     else
     {
         qDebug() << "Failed to get zoom value";
         //ui->zoomSlider->setEnabled(false);
         //ui->zoomSpinBox->setEnabled(false);
+        emit hasZoom(false, 0, 0);
     }
 
     // ********************************************************************************
@@ -626,6 +646,7 @@ void USBCameras::readCameraSettings()
         //ui->focusSlider->setRange(emin, emax);
         //ui->focusSpinBox->setEnabled(true);
         //ui->focusSpinBox->setRange(emin, emax);
+        emit hasFocus(true, emin, emax);
         m_hasFocus = true;
     }
     else
@@ -634,6 +655,7 @@ void USBCameras::readCameraSettings()
         //ui->focusSlider->setEnabled(false);
         //ui->focusSpinBox->setRange(0, 0);
         //ui->focusSpinBox->setEnabled(false);
+        emit hasFocus(false, 0, 0);
     }
 
     int32_t focus;
@@ -643,12 +665,14 @@ void USBCameras::readCameraSettings()
         //ui->focusSlider->setEnabled(true);
         //ui->focusSpinBox->setEnabled(true);
         //ui->focusSlider->setValue(focus);
+        emit setFocus(focus);
     }
     else
     {
         qDebug() << "Failed to get focus value";
         //ui->focusSlider->setEnabled(false);
         //ui->focusSpinBox->setEnabled(false);
+        emit hasFocus(false, 0, 0);
     }
 
 
@@ -665,6 +689,7 @@ void USBCameras::readCameraSettings()
         //ui->hueSlider->setRange(emin, emax);
         //ui->hueSpinBox->setEnabled(true);
         //ui->hueSpinBox->setRange(emin, emax);
+        emit hasHue(true, emin, emax);
         m_hasHue = true;
     }
     else
@@ -673,6 +698,7 @@ void USBCameras::readCameraSettings()
         //ui->hueSlider->setEnabled(false);
         //ui->hueSpinBox->setRange(0, 0);
         //ui->hueSpinBox->setEnabled(false);
+        emit hasHue(false, 0, 0);
     }
 
     int32_t hue;
@@ -682,12 +708,14 @@ void USBCameras::readCameraSettings()
         //ui->hueSlider->setEnabled(true);
         //ui->hueSpinBox->setEnabled(true);
         //ui->hueSlider->setValue(hue);
+        emit setHue(hue);
     }
     else
     {
         qDebug() << "Failed to get hue value";
         //ui->hueSlider->setEnabled(false);
         //ui->hueSpinBox->setEnabled(false);
+        emit hasHue(false, 0, 0);
     }
 
     // ********************************************************************************
@@ -703,6 +731,7 @@ void USBCameras::readCameraSettings()
         //ui->sharpnessSlider->setRange(emin, emax);
         //ui->sharpnessSpinBox->setEnabled(true);
         //ui->sharpnessSpinBox->setRange(emin, emax);
+        emit hasSharpness(true, emin, emax);
         m_hasSharpness = true;
     }
     else
@@ -711,6 +740,7 @@ void USBCameras::readCameraSettings()
         //ui->sharpnessSlider->setEnabled(false);
         //ui->sharpnessSpinBox->setRange(0, 0);
         //ui->sharpnessSpinBox->setEnabled(false);
+        emit hasSharpness(false, 0, 0);
     }
 
     int32_t sharpness;
@@ -720,12 +750,14 @@ void USBCameras::readCameraSettings()
         //ui->sharpnessSlider->setEnabled(true);
         //ui->sharpnessSpinBox->setEnabled(true);
         //ui->sharpnessSlider->setValue(sharpness);
+        emit setSharpness(sharpness);
     }
     else
     {
         qDebug() << "Failed to get sharpness value";
         //ui->sharpnessSlider->setEnabled(false);
         //ui->sharpnessSpinBox->setEnabled(false);
+        emit hasSharpness(false, 0, 0);
     }
 
     // ********************************************************************************
@@ -741,6 +773,7 @@ void USBCameras::readCameraSettings()
         //ui->backlightSlider->setRange(emin, emax);
         //ui->backlightSpinBox->setEnabled(true);
         //ui->backlightSpinBox->setRange(emin, emax);
+        emit hasBacklightcomp(true, 0, 0);
         m_hasBacklightcomp = true;
     }
     else
@@ -749,6 +782,7 @@ void USBCameras::readCameraSettings()
         //ui->backlightSlider->setEnabled(false);
         //ui->backlightSpinBox->setRange(0, 0);
         //ui->backlightSpinBox->setEnabled(false);
+        emit hasBacklightcomp(false, 0, 0);
     }
 
     int32_t backlight;
@@ -758,12 +792,14 @@ void USBCameras::readCameraSettings()
         //ui->backlightSlider->setEnabled(true);
         //ui->backlightSpinBox->setEnabled(true);
         //ui->backlightSlider->setValue(backlight);
+        emit setBacklightcomp(backlight);
     }
     else
     {
         qDebug() << "Failed to get backlight value";
         //ui->backlightSlider->setEnabled(false);
         //ui->backlightSpinBox->setEnabled(false);
+        emit hasBacklightcomp(false, 0, 0);
     }
 
     // ********************************************************************************
@@ -779,10 +815,12 @@ void USBCameras::readCameraSettings()
         //ui->powerlineFreqSlider->setRange(emin, emax);
         //ui->powerlineFreqSpinBox->setEnabled(true);
         //ui->powerlineFreqSpinBox->setRange(emin, emax);
-        m_hasBacklightcomp = true;
+        emit hasPowerlineFreq(true, emin, emax);
+        m_hasPowerlineFreqEnable = true;
     }
     else
     {
+        emit hasPowerlineFreq(false, 0, 0);
         //ui->powerlineFreqSlider->setRange(0, 0);
         //ui->powerlineFreqSlider->setEnabled(false);
         //ui->powerlineFreqSpinBox->setRange(0, 0);
@@ -796,12 +834,14 @@ void USBCameras::readCameraSettings()
         //ui->powerlineFreqSlider->setEnabled(true);
         //ui->powerlineFreqSpinBox->setEnabled(true);
         //ui->powerlineFreqSlider->setValue(powerline);
+        emit setPowerlineFreq(powerline);
     }
     else
     {
         qDebug() << "Failed to get power line frequency value";
         //ui->powerlineFreqSlider->setEnabled(false);
         //ui->powerlineFreqSpinBox->setEnabled(false);
+        emit hasPowerlineFreq(false, 0, 0);
     }
 
 }

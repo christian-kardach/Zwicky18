@@ -68,6 +68,7 @@ private:
     bool        m_hasSharpness;
     bool        m_hasBacklightcomp;
     bool        m_hasColorEnable;
+    bool        m_hasPowerlineFreqEnable;
 
     QTimer*     m_refreshTimer;
     CapContext  m_ctx;
@@ -87,6 +88,7 @@ signals:
     void hasHue(bool enabled, int emin, int emax);
     void hasSharpness(bool enabled, int emin, int emax);
     void hasBacklightcomp(bool enabled, int emin, int emax);
+    void hasPowerlineFreq(bool enabled, int emin, int emax);
 
     void hasAutoExposure(bool enabled, int checked);
     void hasAutoGain(bool enabled, int checked);
@@ -105,6 +107,7 @@ signals:
     void setHue(int val);
     void setSharpness(int val);
     void setBacklightcomp(int val);
+    void setPowerlineFreq(int val);
 
     void frameImage(QImage frame);
 };

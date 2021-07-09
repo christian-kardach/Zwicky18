@@ -40,10 +40,12 @@ public slots:
     void hasHue(bool enabled, int emin, int emax);
     void hasSharpness(bool enabled, int emin, int emax);
     void hasBacklightcomp(bool enabled, int emin, int emax);
+    void hasPowerlineFreq(bool enabled, int emin, int emax);
 
     void hasAutoExposure(bool enabled, int checked);
     void hasAutoGain(bool enabled, int checked);
     void hasAutoWhiteBalance(bool enabled, int checked);
     void hasAutoFocus(bool enabled, int checked);
+
 };
 #endif // MAINWINDOW_H
