@@ -28,7 +28,8 @@ public:
 public slots:
     void doFrameUpdate();
     // void updateLogMessages();
-    void changeCamera(int index);
+    void changeCamera(QVariant v);
+    void closeCamera();
     void listCameras();
 
     void onAutoExposure(bool state);
@@ -110,6 +111,7 @@ signals:
     void setPowerlineFreq(int val);
 
     void frameImage(QImage frame);
+    void updateStatusBar(QString message);
 };
 
 #endif // USBCAMERAS_H

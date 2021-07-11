@@ -40,7 +40,66 @@
            <layout class="QVBoxLayout" name="liveViewLayout"/>
           </widget>
           <widget class="QWidget" name="verticalLayoutWidget_4">
-           <layout class="QVBoxLayout" name="verticalLayout_8"/>
+           <layout class="QVBoxLayout" name="verticalLayout_8">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout">
+              <item>
+               <spacer name="horizontalSpacer_5">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="zoomSpinBox_2"/>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_20">
+              <item>
+               <widget class="QSpinBox" name="rangeStartSpinBox">
+                <property name="maximum">
+                 <number>9999</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSlider" name="frameSlider">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="rangeEndSpinBox">
+                <property name="maximum">
+                 <number>9999</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
           </widget>
          </widget>
         </item>
@@ -48,6 +107,9 @@
       </widget>
       <widget class="QWidget" name="verticalLayoutWidget_2">
        <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QGraphicsView" name="graphicsView"/>
+        </item>
         <item>
          <widget class="QTabWidget" name="tabWidget">
           <property name="currentIndex">
@@ -68,7 +130,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>779</width>
+                 <width>481</width>
                  <height>750</height>
                 </rect>
                </property>
@@ -118,10 +180,10 @@
                   <item>
                    <widget class="QSlider" name="exposureSlider">
                     <property name="minimum">
-                     <number>-50</number>
+                     <number>0</number>
                     </property>
                     <property name="maximum">
-                     <number>50</number>
+                     <number>0</number>
                     </property>
                     <property name="orientation">
                      <enum>Qt::Horizontal</enum>
@@ -542,8 +604,20 @@
      <height>21</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionOpen_Video"/>
+   </widget>
+   <addaction name="menuFile"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionOpen_Video">
+   <property name="text">
+    <string>Open Video</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections>
@@ -554,12 +628,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>751</x>
-     <y>143</y>
+     <x>762</x>
+     <y>-94</y>
     </hint>
     <hint type="destinationlabel">
-     <x>780</x>
-     <y>139</y>
+     <x>811</x>
+     <y>-90</y>
     </hint>
    </hints>
   </connection>
@@ -570,12 +644,396 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>785</x>
-     <y>151</y>
+     <x>811</x>
+     <y>-90</y>
     </hint>
     <hint type="destinationlabel">
-     <x>627</x>
-     <y>144</y>
+     <x>748</x>
+     <y>-94</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>gainSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>gainSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>745</x>
+     <y>-42</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>798</x>
+     <y>-42</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>gainSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>gainSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>788</x>
+     <y>-33</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>645</x>
+     <y>-42</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>whitebalanceSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>whitebalanceSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>664</x>
+     <y>22</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>785</x>
+     <y>30</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>whitebalanceSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>whitebalanceSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>780</x>
+     <y>19</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>638</x>
+     <y>23</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>gammaSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>gammaSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>753</x>
+     <y>78</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>788</x>
+     <y>77</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>gammaSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>gammaSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>796</x>
+     <y>88</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>596</x>
+     <y>77</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>contrastSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>contrastSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>745</x>
+     <y>132</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>790</x>
+     <y>131</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>contrastSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>contrastSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>795</x>
+     <y>120</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>632</x>
+     <y>133</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>hueSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>hueSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>754</x>
+     <y>177</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>791</x>
+     <y>181</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>hueSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>hueSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>799</x>
+     <y>169</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>654</x>
+     <y>181</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>saturationSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>saturationSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>736</x>
+     <y>230</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>792</x>
+     <y>225</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>saturationSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>saturationSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>791</x>
+     <y>237</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>669</x>
+     <y>228</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>brightnessSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>brightnessSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>742</x>
+     <y>281</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>792</x>
+     <y>291</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>brightnessSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>brightnessSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>790</x>
+     <y>281</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>678</x>
+     <y>280</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sharpnessSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sharpnessSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>719</x>
+     <y>329</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>786</x>
+     <y>331</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sharpnessSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sharpnessSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>780</x>
+     <y>341</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>654</x>
+     <y>330</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>focusSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>focusSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>733</x>
+     <y>391</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>804</x>
+     <y>389</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>focusSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>focusSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>782</x>
+     <y>396</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>641</x>
+     <y>388</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>powerlineFreqSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>powerlineFreqSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>745</x>
+     <y>438</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>800</x>
+     <y>446</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>powerlineFreqSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>powerlineFreqSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>795</x>
+     <y>435</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>643</x>
+     <y>439</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>backlightSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>backlightSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>744</x>
+     <y>491</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>797</x>
+     <y>496</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>backlightSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>backlightSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>780</x>
+     <y>486</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>622</x>
+     <y>494</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>zoomSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>zoomSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>733</x>
+     <y>542</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>800</x>
+     <y>539</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>zoomSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>zoomSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>789</x>
+     <y>549</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>647</x>
+     <y>538</y>
     </hint>
    </hints>
   </connection>

@@ -15,12 +15,14 @@ INCLUDEPATH += ..\third-party\opencv\bin\x64
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
+    previewscene.cpp \
     previewscenebase.cpp \
     previewscenewidget.cpp \
     usbcameras.cpp
 
 HEADERS += \
     mainwindow.h \
+    previewscene.h \
     previewscenebase.h \
     previewscenewidget.h \
     usbcameras.h
@@ -29,6 +31,15 @@ FORMS += \
     mainwindow.ui
 
 LIBS += -L..\third-party\openpnp\libs\x64\ -lopenpnp-capture
+
+LIBS += -L..\third-party\opencv\libs\ -lopencv_core453d
+LIBS += -L..\third-party\opencv\libs\ -lopencv_highgui453d
+LIBS += -L..\third-party\opencv\libs\ -lopencv_imgcodecs453d
+LIBS += -L..\third-party\opencv\libs\ -lopencv_imgproc453d
+LIBS += -L..\third-party\opencv\libs\ -lopencv_features2d453d
+LIBS += -L..\third-party\opencv\libs\ -lopencv_calib3d453d
+LIBS += -L..\third-party\opencv\libs\ -lopencv_video453d
+LIBS += -L..\third-party\opencv\libs\ -lopencv_videoio453d
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -121,20 +121,17 @@ void USBCameras::doFrameUpdate()
                                               Cap_getStreamFrameCount(m_ctx, m_streamID));
 
         //ui->statusBar->showMessage(frameInfo);
+        emit updateStatusBar(frameInfo);
     }
 
     // also update the log messages, if there are some
     // updateLogMessages();
 }
 
-void USBCameras::changeCamera(int index)
+void USBCameras::changeCamera(QVariant v)
 {
-    if(index == 0)
-    {
-        return;
-    }
-    //QVariant v = ui->cameraChooser->currentData();
-    QVariant v = m_cameraList.at(index+1);
+    // QVariant v = ui->cameraChooser->currentData();
+    // QVariant v = m_cameraList.at(index+1);
     CustomComboBoxData data = v.value<CustomComboBoxData>();
 
     // kill currently running stream
@@ -160,12 +157,19 @@ void USBCameras::changeCamera(int index)
     m_refreshTimer->start(50);
 }
 
+void USBCameras::closeCamera()
+{
+    qDebug() << "Closing camera stream...";
+    m_refreshTimer->stop();
+    Cap_closeStream(m_ctx, m_streamID);
+}
+
 void USBCameras::onAutoExposure(bool state)
 {
     qDebug() << "Auto exposure set to " << state;
     Cap_setAutoProperty(m_ctx, m_streamID, CAPPROPID_EXPOSURE, state ? 1 : 0);
-    emit hasAutoExposure((!state), m_hasExposure);
-    //ui->exposureSlider->setEnabled((!state) & m_hasExposure);
+    // emit hasAutoExposure((!state), m_hasExposure);
+    // ui->exposureSlider->setEnabled((!state) & m_hasExposure);
 }
 
 void USBCameras::onAutoWhiteBalance(bool state)
@@ -173,7 +177,7 @@ void USBCameras::onAutoWhiteBalance(bool state)
     qDebug() << "Auto white balance set to " << state;
     Cap_setAutoProperty(m_ctx, m_streamID, CAPPROPID_WHITEBALANCE, state ? 1 : 0);
     //ui->whitebalanceSlider->setEnabled((!state) & m_hasWhiteBalance);
-    emit hasAutoWhiteBalance(!state, m_hasWhiteBalance);
+    // emit hasAutoWhiteBalance(!state, m_hasWhiteBalance);
 }
 
 void USBCameras::onAutoGain(bool state)
@@ -181,7 +185,7 @@ void USBCameras::onAutoGain(bool state)
     qDebug() << "Auto gain set to " << state;
     Cap_setAutoProperty(m_ctx, m_streamID, CAPPROPID_GAIN, state ? 1 : 0);
     //ui->gainSlider->setEnabled((!state) & m_hasGain);
-    emit hasAutoGain(!state, m_hasGain);
+    //emit hasAutoGain(!state, m_hasGain);
 }
 
 void USBCameras::onAutoFocus(bool state)
@@ -189,7 +193,7 @@ void USBCameras::onAutoFocus(bool state)
     qDebug() << "Auto focus set to " << state;
     Cap_setAutoProperty(m_ctx, m_streamID, CAPPROPID_FOCUS, state ? 1 : 0);
     //ui->gainSlider->setEnabled((!state) & m_hasGain);
-    emit hasAutoFocus(!state, m_hasFocus);
+    // emit hasAutoFocus(!state, m_hasFocus);
 }
 
 void USBCameras::readCameraSettings()
@@ -211,11 +215,6 @@ void USBCameras::readCameraSettings()
     m_hasZoom = false;
     m_hasColorEnable = false;
 
-    //ui->exposureSlider->setEnabled(false);
-    //ui->gainSlider->setEnabled(false);
-    //ui->whitebalanceSlider->setEnabled(false);
-    //ui->focusSlider->setEnabled(false);
-
     // ********************************************************************************
     //   AUTO EXPOSURE
     // ********************************************************************************
@@ -224,14 +223,10 @@ void USBCameras::readCameraSettings()
     if (Cap_getAutoProperty(m_ctx, m_streamID, CAPPROPID_EXPOSURE, &bValue) != CAPRESULT_OK)
     {
         emit hasAutoExposure(false, 0);
-        //ui->autoExposure->setEnabled(false);
-        //ui->autoExposure->setCheckState(Qt::Unchecked);
     }
     else
     {
         emit hasAutoExposure(true, bValue);
-        //ui->autoExposure->setEnabled(true);
-        //ui->autoExposure->setCheckState((bValue==0) ? Qt::Unchecked : Qt::Checked);
     }
 
     // ********************************************************************************
@@ -241,14 +236,10 @@ void USBCameras::readCameraSettings()
     if (Cap_getAutoProperty(m_ctx, m_streamID, CAPPROPID_GAIN, &bValue) != CAPRESULT_OK)
     {
         emit hasAutoGain(false, 0);
-        //ui->autoGain->setEnabled(false);
-        //ui->autoGain->setCheckState(Qt::Unchecked);
     }
     else
     {
         emit hasAutoGain(true, bValue);
-        //ui->autoGain->setEnabled(true);
-        //ui->autoGain->setCheckState((bValue==0) ? Qt::Unchecked : Qt::Checked);
     }
 
     // ********************************************************************************
@@ -258,14 +249,10 @@ void USBCameras::readCameraSettings()
     if (Cap_getAutoProperty(m_ctx, m_streamID, CAPPROPID_WHITEBALANCE, &bValue) != CAPRESULT_OK)
     {
         emit hasAutoWhiteBalance(false, 0);
-        //ui->autoWhiteBalance->setEnabled(false);
-        //ui->autoWhiteBalance->setCheckState(Qt::Unchecked);
     }
     else
     {
         emit hasAutoWhiteBalance(true, bValue);
-        //ui->autoWhiteBalance->setEnabled(true);
-        //ui->autoWhiteBalance->setCheckState((bValue==0) ? Qt::Unchecked : Qt::Checked);
     }
 
     // ********************************************************************************
@@ -276,15 +263,11 @@ void USBCameras::readCameraSettings()
     {
         qDebug() << "Autofocus unsupported";
         emit hasAutoFocus(false, 0);
-        //ui->autoFocus->setEnabled(false);
-        //ui->autoFocus->setCheckState(Qt::Unchecked);
     }
     else
     {
         qDebug() << "Autofocus supported";
         emit hasAutoFocus(true, bValue);
-        //ui->autoFocus->setEnabled(true);
-        //ui->autoFocus->setCheckState((bValue==0) ? Qt::Unchecked : Qt::Checked);
     }
 
     // ********************************************************************************
@@ -300,31 +283,17 @@ void USBCameras::readCameraSettings()
 
         emit hasExposure(true, emin, emax);
         m_hasExposure = true;
-        /*
-        ui->exposureSlider->setRange(emin, emax);
-        ui->exposureSpinBox->setRange(emin, emax);
-        m_hasExposure = true;
-        if (!ui->autoExposure->isChecked())
-        {
-            ui->exposureSlider->setEnabled(true);
-            ui->exposureSpinBox->setEnabled(true);
-        }
-        */
     }
     else
     {
         qDebug() << "Failed to get exposure limits";
         emit hasExposure(false, 0, 0);
-        //ui->exposureSlider->setEnabled(false);
-        //ui->exposureSpinBox->setEnabled(false);
-        //ui->exposureSlider->setRange(0, 0);
     }
 
     int32_t exposure;
     if (Cap_getProperty(m_ctx, m_streamID, CAPPROPID_EXPOSURE, &exposure)==CAPRESULT_OK)
     {
         qDebug() << "Exposure: " << exposure;
-        //ui->exposureSlider->setValue(exposure);
         emit setExposure((int)exposure);
 
     }
@@ -332,8 +301,6 @@ void USBCameras::readCameraSettings()
     {
         qDebug() << "Failed to get exposure value";
         emit hasExposure(false, 0, 0);
-        //ui->exposureSlider->setEnabled(false);
-        //ui->exposureSpinBox->setEnabled(false);
     }
 
     // ********************************************************************************
@@ -348,24 +315,11 @@ void USBCameras::readCameraSettings()
 
         emit hasWhiteBalance(true, emin, emax);
         m_hasWhiteBalance = true;
-        /*
-        ui->whitebalanceSlider->setRange(emin, emax);
-        ui->whitebalanceSpinBox->setRange(emin, emax);
-        m_hasWhiteBalance = true;
-        if (!ui->autoWhiteBalance->isChecked())
-        {
-            ui->whitebalanceSlider->setEnabled(true);
-            ui->whitebalanceSpinBox->setEnabled(true);
-        }
-        */
     }
     else
     {
         qDebug() << "Failed to get white balance limits";
         emit hasWhiteBalance(false, 0, 0);
-        //ui->whitebalanceSlider->setRange(0, 0);
-        //ui->whitebalanceSlider->setEnabled(false);
-        //ui->whitebalanceSpinBox->setEnabled(false);
     }
 
     int32_t whitebalance;
@@ -373,14 +327,11 @@ void USBCameras::readCameraSettings()
     {
         qDebug() << "White Balance: " << whitebalance;
         emit setWhiteBalance(whitebalance);
-        //ui->whitebalanceSlider->setValue(whitebalance);
     }
     else
     {
         qDebug() << "Failed to get gain value";
         emit hasWhiteBalance(false, 0, 0);
-        //ui->whitebalanceSlider->setEnabled(false);
-        //ui->whitebalanceSpinBox->setEnabled(false);
     }
 
     // ********************************************************************************
@@ -395,38 +346,23 @@ void USBCameras::readCameraSettings()
 
         emit hasGain(true, emin, emax);
         m_hasGain = true;
-        /*
-        ui->gainSlider->setRange(emin, emax);
-        ui->gainSpinBox->setRange(emin, emax);
-        m_hasGain = true;
-        if (!ui->autoGain->isChecked())
-        {
-            ui->gainSlider->setEnabled(true);
-            ui->gainSpinBox->setEnabled(true);
-        }
-        */
     }
     else
     {
         qDebug() << "Failed to get gain limits";
         emit hasGain(false, 0, 0);
-        //ui->gainSlider->setRange(0, 0);
-        //ui->gainSlider->setEnabled(false);
     }
 
     int32_t gain;
     if (Cap_getProperty(m_ctx, m_streamID, CAPPROPID_GAIN, &gain)==CAPRESULT_OK)
     {
         qDebug() << "Gain: " << gain;
-        //ui->gainSlider->setValue(gain);
         emit setGain(gain);
     }
     else
     {
         qDebug() << "Failed to get gain value";
         emit hasGain(false, 0, 0);
-        //ui->gainSlider->setEnabled(false);
-        //ui->gainSpinBox->setEnabled(false);
     }
 
     // ********************************************************************************
@@ -440,29 +376,23 @@ void USBCameras::readCameraSettings()
         qDebug() << "Contrast default: " << edefault;
 
         emit hasContrast(true, emin, emax);
-        //ui->contrastSlider->setEnabled(true);
-        //ui->contrastSlider->setRange(emin, emax);
         m_hasContrast = true;
     }
     else
     {
         emit hasContrast(false, 0, 0);
-        //ui->contrastSlider->setRange(0, 0);
-        //ui->contrastSlider->setEnabled(false);
     }
 
     int32_t contrast;
     if (Cap_getProperty(m_ctx, m_streamID, CAPPROPID_CONTRAST, &contrast)==CAPRESULT_OK)
     {
         qDebug() << "Contrast: " << contrast;
-        //ui->contrastSlider->setValue(contrast);
         emit setContrast(contrast);
     }
     else
     {
         qDebug() << "Failed to get contrast value";
         emit hasContrast(false, 0, 0);
-        //ui->contrastSlider->setEnabled(false);
     }
 
     // ********************************************************************************
@@ -474,36 +404,23 @@ void USBCameras::readCameraSettings()
         qDebug() << "Brightness min: " << emin;
         qDebug() << "Brightness max: " << emax;
         qDebug() << "Brightness default: " << edefault;
-        //ui->brightnessSlider->setEnabled(true);
-        //ui->brightnessSlider->setRange(emin, emax);
-        //ui->brightnessSpinBox->setRange(emin, emax);
-        //ui->brightnessSpinBox->setEnabled(true);
         emit hasBrightness(true, emin, emax);
         m_hasBrightness = true;
     }
     else
     {
         emit hasGain(false, 0, 0);
-        //ui->brightnessSlider->setRange(0, 0);
-        //ui->brightnessSlider->setEnabled(false);
-        //ui->brightnessSpinBox->setRange(0, 0);
-        //ui->brightnessSpinBox->setEnabled(false);
     }
 
     int32_t brightness;
     if (Cap_getProperty(m_ctx, m_streamID, CAPPROPID_BRIGHTNESS, &brightness)==CAPRESULT_OK)
     {
         qDebug() << "Brightness: " << brightness;
-        //ui->brightnessSlider->setEnabled(true);
-        //ui->brightnessSlider->setValue(brightness);
-        //ui->brightnessSpinBox->setEnabled(true);
         emit setBrightness(brightness);
     }
     else
     {
         qDebug() << "Failed to get brightness value";
-        //ui->brightnessSlider->setEnabled(false);
-        //ui->brightnessSpinBox->setEnabled(false);
         emit hasBrightness(false, 0, 0);
     }
 
@@ -516,36 +433,23 @@ void USBCameras::readCameraSettings()
         qDebug() << "Gamma min: " << emin;
         qDebug() << "Gamma max: " << emax;
         qDebug() << "Gamma default: " << edefault;
-        //ui->gammaSlider->setEnabled(true);
-        //ui->gammaSlider->setRange(emin, emax);
-        //ui->gammaSpinBox->setEnabled(true);
-        //ui->gammaSpinBox->setRange(emin, emax);
         emit hasGamma(true, emin, emax);
         m_hasGamma = true;
     }
     else
     {
         emit hasGamma(false, 0, 0);
-        //ui->gammaSlider->setRange(0, 0);
-        //ui->gammaSlider->setEnabled(false);
-        //ui->gammaSpinBox->setRange(0, 0);
-        //ui->gammaSpinBox->setEnabled(false);
     }
 
     int32_t gamma;
     if (Cap_getProperty(m_ctx, m_streamID, CAPPROPID_GAMMA, &gamma)==CAPRESULT_OK)
     {
         qDebug() << "Gamma: " << gamma;
-        //ui->gammaSlider->setEnabled(true);
-        //ui->gammaSpinBox->setEnabled(true);
-        //ui->gammaSlider->setValue(gamma);
         emit setGamma(gamma);
     }
     else
     {
         qDebug() << "Failed to get gamma value";
-        //ui->gammaSlider->setEnabled(false);
-        //ui->gammaSpinBox->setEnabled(false);
         emit hasGamma(false, 0, 0);
     }
 
@@ -558,36 +462,23 @@ void USBCameras::readCameraSettings()
         qDebug() << "Saturation min: " << emin;
         qDebug() << "Saturation max: " << emax;
         qDebug() << "Saturation default: " << edefault;
-        //ui->saturationSlider->setEnabled(true);
-        //ui->saturationSlider->setRange(emin, emax);
-        //ui->saturationSpinBox->setEnabled(true);
-        //ui->saturationSpinBox->setRange(emin, emax);
         emit hasSaturation(true, emin, emax);
         m_hasSaturation = true;
     }
     else
     {
         emit hasSaturation(false, 0, 0);
-        //ui->saturationSlider->setRange(0, 0);
-        //ui->saturationSlider->setEnabled(false);
-        //ui->saturationSpinBox->setRange(0, 0);
-        //ui->saturationSpinBox->setEnabled(false);
     }
 
     int32_t saturation;
     if (Cap_getProperty(m_ctx, m_streamID, CAPPROPID_SATURATION, &saturation)==CAPRESULT_OK)
     {
         qDebug() << "Saturation: " << saturation;
-        //ui->saturationSlider->setEnabled(true);
-        //ui->saturationSpinBox->setEnabled(true);
-        //ui->saturationSlider->setValue(saturation);
         emit setSaturation(saturation);
     }
     else
     {
         qDebug() << "Failed to get saturation value";
-        //ui->saturationSlider->setEnabled(false);
-        //ui->saturationSpinBox->setEnabled(false);
         emit hasSaturation(false, 0, 0);
     }
 
@@ -600,19 +491,11 @@ void USBCameras::readCameraSettings()
         qDebug() << "zoom min: " << emin;
         qDebug() << "zoom max: " << emax;
         qDebug() << "zoom default: " << edefault;
-        //ui->zoomSlider->setEnabled(true);
-        //ui->zoomSlider->setRange(emin, emax);
-        //ui->zoomSpinBox->setEnabled(true);
-        //ui->zoomSpinBox->setRange(emin, emax);
         emit hasZoom(true, emin, emax);
         m_hasZoom = true;
     }
     else
     {
-        //ui->zoomSlider->setRange(0, 0);
-        //ui->zoomSlider->setEnabled(false);
-        //ui->zoomSpinBox->setRange(0, 0);
-        //ui->zoomSpinBox->setEnabled(false);
         emit hasZoom(false, 0, 0);
     }
 
@@ -620,16 +503,11 @@ void USBCameras::readCameraSettings()
     if (Cap_getProperty(m_ctx, m_streamID, CAPPROPID_ZOOM, &zoom)==CAPRESULT_OK)
     {
         qDebug() << "zoom: " << zoom;
-        //ui->zoomSlider->setEnabled(true);
-        //ui->zoomSpinBox->setEnabled(true);
-        //ui->zoomSlider->setValue(zoom);
         emit setZoom(zoom);
     }
     else
     {
         qDebug() << "Failed to get zoom value";
-        //ui->zoomSlider->setEnabled(false);
-        //ui->zoomSpinBox->setEnabled(false);
         emit hasZoom(false, 0, 0);
     }
 
@@ -642,19 +520,11 @@ void USBCameras::readCameraSettings()
         qDebug() << "focus min: " << emin;
         qDebug() << "focus max: " << emax;
         qDebug() << "focus default: " << edefault;
-        //ui->focusSlider->setEnabled(true);
-        //ui->focusSlider->setRange(emin, emax);
-        //ui->focusSpinBox->setEnabled(true);
-        //ui->focusSpinBox->setRange(emin, emax);
         emit hasFocus(true, emin, emax);
         m_hasFocus = true;
     }
     else
     {
-        //ui->focusSlider->setRange(0, 0);
-        //ui->focusSlider->setEnabled(false);
-        //ui->focusSpinBox->setRange(0, 0);
-        //ui->focusSpinBox->setEnabled(false);
         emit hasFocus(false, 0, 0);
     }
 
@@ -662,16 +532,11 @@ void USBCameras::readCameraSettings()
     if (Cap_getProperty(m_ctx, m_streamID, CAPPROPID_FOCUS, &focus)==CAPRESULT_OK)
     {
         qDebug() << "focus: " << focus;
-        //ui->focusSlider->setEnabled(true);
-        //ui->focusSpinBox->setEnabled(true);
-        //ui->focusSlider->setValue(focus);
         emit setFocus(focus);
     }
     else
     {
         qDebug() << "Failed to get focus value";
-        //ui->focusSlider->setEnabled(false);
-        //ui->focusSpinBox->setEnabled(false);
         emit hasFocus(false, 0, 0);
     }
 
@@ -685,19 +550,11 @@ void USBCameras::readCameraSettings()
         qDebug() << "hue min: " << emin;
         qDebug() << "hue max: " << emax;
         qDebug() << "hue default: " << edefault;
-        //ui->hueSlider->setEnabled(true);
-        //ui->hueSlider->setRange(emin, emax);
-        //ui->hueSpinBox->setEnabled(true);
-        //ui->hueSpinBox->setRange(emin, emax);
         emit hasHue(true, emin, emax);
         m_hasHue = true;
     }
     else
     {
-        //ui->hueSlider->setRange(0, 0);
-        //ui->hueSlider->setEnabled(false);
-        //ui->hueSpinBox->setRange(0, 0);
-        //ui->hueSpinBox->setEnabled(false);
         emit hasHue(false, 0, 0);
     }
 
@@ -705,16 +562,11 @@ void USBCameras::readCameraSettings()
     if (Cap_getProperty(m_ctx, m_streamID, CAPPROPID_HUE, &hue)==CAPRESULT_OK)
     {
         qDebug() << "hue: " << hue;
-        //ui->hueSlider->setEnabled(true);
-        //ui->hueSpinBox->setEnabled(true);
-        //ui->hueSlider->setValue(hue);
         emit setHue(hue);
     }
     else
     {
         qDebug() << "Failed to get hue value";
-        //ui->hueSlider->setEnabled(false);
-        //ui->hueSpinBox->setEnabled(false);
         emit hasHue(false, 0, 0);
     }
 
@@ -727,19 +579,11 @@ void USBCameras::readCameraSettings()
         qDebug() << "sharpness min: " << emin;
         qDebug() << "sharpness max: " << emax;
         qDebug() << "sharpness default: " << edefault;
-        //ui->sharpnessSlider->setEnabled(true);
-        //ui->sharpnessSlider->setRange(emin, emax);
-        //ui->sharpnessSpinBox->setEnabled(true);
-        //ui->sharpnessSpinBox->setRange(emin, emax);
         emit hasSharpness(true, emin, emax);
         m_hasSharpness = true;
     }
     else
     {
-        //ui->sharpnessSlider->setRange(0, 0);
-        //ui->sharpnessSlider->setEnabled(false);
-        //ui->sharpnessSpinBox->setRange(0, 0);
-        //ui->sharpnessSpinBox->setEnabled(false);
         emit hasSharpness(false, 0, 0);
     }
 
@@ -747,16 +591,11 @@ void USBCameras::readCameraSettings()
     if (Cap_getProperty(m_ctx, m_streamID, CAPPROPID_SHARPNESS, &sharpness)==CAPRESULT_OK)
     {
         qDebug() << "sharpness: " << sharpness;
-        //ui->sharpnessSlider->setEnabled(true);
-        //ui->sharpnessSpinBox->setEnabled(true);
-        //ui->sharpnessSlider->setValue(sharpness);
         emit setSharpness(sharpness);
     }
     else
     {
         qDebug() << "Failed to get sharpness value";
-        //ui->sharpnessSlider->setEnabled(false);
-        //ui->sharpnessSpinBox->setEnabled(false);
         emit hasSharpness(false, 0, 0);
     }
 
@@ -769,19 +608,11 @@ void USBCameras::readCameraSettings()
         qDebug() << "backlightcomp min: " << emin;
         qDebug() << "backlightcomp max: " << emax;
         qDebug() << "backlightcomp default: " << edefault;
-        //ui->backlightSlider->setEnabled(true);
-        //ui->backlightSlider->setRange(emin, emax);
-        //ui->backlightSpinBox->setEnabled(true);
-        //ui->backlightSpinBox->setRange(emin, emax);
         emit hasBacklightcomp(true, 0, 0);
         m_hasBacklightcomp = true;
     }
     else
     {
-        //ui->backlightSlider->setRange(0, 0);
-        //ui->backlightSlider->setEnabled(false);
-        //ui->backlightSpinBox->setRange(0, 0);
-        //ui->backlightSpinBox->setEnabled(false);
         emit hasBacklightcomp(false, 0, 0);
     }
 
@@ -789,16 +620,11 @@ void USBCameras::readCameraSettings()
     if (Cap_getProperty(m_ctx, m_streamID, CAPPROPID_BACKLIGHTCOMP, &backlight)==CAPRESULT_OK)
     {
         qDebug() << "backlight: " << backlight;
-        //ui->backlightSlider->setEnabled(true);
-        //ui->backlightSpinBox->setEnabled(true);
-        //ui->backlightSlider->setValue(backlight);
         emit setBacklightcomp(backlight);
     }
     else
     {
         qDebug() << "Failed to get backlight value";
-        //ui->backlightSlider->setEnabled(false);
-        //ui->backlightSpinBox->setEnabled(false);
         emit hasBacklightcomp(false, 0, 0);
     }
 
@@ -811,39 +637,25 @@ void USBCameras::readCameraSettings()
         qDebug() << "power line freq min: " << emin;
         qDebug() << "power line freq max: " << emax;
         qDebug() << "power line freq default: " << edefault;
-        //ui->powerlineFreqSlider->setEnabled(true);
-        //ui->powerlineFreqSlider->setRange(emin, emax);
-        //ui->powerlineFreqSpinBox->setEnabled(true);
-        //ui->powerlineFreqSpinBox->setRange(emin, emax);
         emit hasPowerlineFreq(true, emin, emax);
         m_hasPowerlineFreqEnable = true;
     }
     else
     {
         emit hasPowerlineFreq(false, 0, 0);
-        //ui->powerlineFreqSlider->setRange(0, 0);
-        //ui->powerlineFreqSlider->setEnabled(false);
-        //ui->powerlineFreqSpinBox->setRange(0, 0);
-        //ui->powerlineFreqSpinBox->setEnabled(false);
     }
 
     int32_t powerline;
     if (Cap_getProperty(m_ctx, m_streamID, CAPPROPID_POWERLINEFREQ, &powerline)==CAPRESULT_OK)
     {
         qDebug() << "power line : " << powerline;
-        //ui->powerlineFreqSlider->setEnabled(true);
-        //ui->powerlineFreqSpinBox->setEnabled(true);
-        //ui->powerlineFreqSlider->setValue(powerline);
         emit setPowerlineFreq(powerline);
     }
     else
     {
         qDebug() << "Failed to get power line frequency value";
-        //ui->powerlineFreqSlider->setEnabled(false);
-        //ui->powerlineFreqSpinBox->setEnabled(false);
         emit hasPowerlineFreq(false, 0, 0);
     }
-
 }
 
 void USBCameras::onExposureSlider(int value)

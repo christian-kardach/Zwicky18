@@ -5,15 +5,14 @@
 
 PreviewSceneBase::PreviewSceneBase(QObject *parent)
     : QGraphicsScene(parent),
-      m_modified(false),
-      m_scribbling(false),
-      m_penWidth(3),
-      m_penColor(Qt::blue)
+      m_modified(false)
 {
+
     m_image = new QPixmap(1920, 1080);
-    m_image->fill(Qt::white);
+    m_image->fill(Qt::gray);
     m_item = addPixmap(*m_image);
-    this->addItem(m_item);
+    m_item->setTransformationMode(Qt::SmoothTransformation);
+    //this->addItem(m_item);
 }
 
 void PreviewSceneBase::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
